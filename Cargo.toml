@@ -22,3 +22,13 @@ cron = "0.12"
 ssh2="0.9"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+panic = 'abort'
+incremental = false
+opt-level = 'z'
+
+[build]
+rustflags = ["-C", "target-feature=+crt-static"]
