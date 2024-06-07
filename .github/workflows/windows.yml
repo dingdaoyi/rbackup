@@ -22,7 +22,7 @@ jobs:
       - name: Archive artifacts
         run: |
           Copy-Item -Path .\target\x86_64-pc-windows-msvc\release\rbackup.exe -Destination .\
-          Compress-Archive -Path .\rbackup.exe, .\config.toml -DestinationPath rbackup.zip
+          Compress-Archive -Path .\rbackup.exe, .\config.toml.teplate -DestinationPath rbackup.zip
         if: success()
 
       - name: Upload artifacts
