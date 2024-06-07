@@ -1,0 +1,31 @@
+name: Build-Windows
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Environment
+        run: rustup target add  x86_64-pc-windows-msvc
+
+      - name: Build
+        run: cargo build --release --target x86_64-pc-windows-msvc
+      - name: Archive artifacts
+        run: |
+          copy .\target\x86_64-pc-windows-msvc\release\rbackup.exe .\
+          tar -czvf rbackup.tar.gz  rbackup.exe config.toml
+        if: success()
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-package
+          path: |
+            rbackup.tar.gz

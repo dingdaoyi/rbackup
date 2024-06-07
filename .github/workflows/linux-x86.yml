@@ -1,0 +1,35 @@
+name: Build-Linux
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Environment
+        run: |
+          rustup target add  x86_64-unknown-linux-musl
+          sudo apt update
+          sudo apt install musl-tools
+
+      - name: Build
+        run: cargo build --release --target x86_64-unknown-linux-musl
+
+      - name: Archive artifacts
+        run: |
+          cp target/x86_64-unknown-linux-musl/release/rbackup* ./
+          tar -czvf rbackup.tar.gz ./rbackup* config.toml.teplate
+        if: success()
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest-package
+          path: |
+            rbackup.tar.gz
