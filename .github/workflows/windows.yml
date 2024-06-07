@@ -12,20 +12,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Environment
-        run: rustup target add  x86_64-pc-windows-msvc
+
+      - name: Set up Rust
+        run: rustup target add x86_64-pc-windows-msvc
 
       - name: Build
         run: cargo build --release --target x86_64-pc-windows-msvc
+
       - name: Archive artifacts
         run: |
-          copy .\target\x86_64-pc-windows-msvc\release\rbackup.exe .\
-          tar -czvf rbackup.tar.gz  rbackup.exe config.toml
+          Copy-Item -Path .\target\x86_64-pc-windows-msvc\release\rbackup.exe -Destination .\
+          Compress-Archive -Path .\rbackup.exe, .\config.toml -DestinationPath rbackup.zip
         if: success()
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: windows-package
-          path: |
-            rbackup.tar.gz
+          path: rbackup.zip
