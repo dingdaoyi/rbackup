@@ -19,7 +19,7 @@ jobs:
       - name: Install Visual C++ Redistributable
         run: |
           curl -L -o vc_redist.x64.exe https://aka.ms/vs/17/release/vc_redist.x64.exe
-          start /wait vc_redist.x64.exe /quiet /install
+          Start-Process -FilePath .\vc_redist.x64.exe -ArgumentList '/quiet', '/install' -NoNewWindow -Wait
 
       - name: Build
         env:
