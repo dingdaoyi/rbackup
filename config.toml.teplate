@@ -1,0 +1,38 @@
+default = "ssh-server"
+[log]
+level="DEBUG"
+[[servers]]
+type = "S3"
+name = "minio"
+access_key = "name"
+secret_key = "password"
+bucket = "bucket"
+region = "region"
+endpoint = "http://minio.local"
+default_path="/backup"
+[[servers]] # 阿里云测试失败
+type = "S3"
+name = "aliyun"
+access_key = "access_key"
+secret_key = "secret_key"
+bucket = "s3buket"
+region = "default"
+endpoint = "*.oss-cn-chengdu.aliyuncs.com"
+default_path="/backup"
+[[servers]]
+type = "S3"
+name = "tengxun"
+access_key = "access_key"
+secret_key = "secret_key"
+bucket = "" # 腾讯云不需要添加桶名称
+region = "ap-nanjing"
+endpoint = "https://*.cos.ap-nanjing.myqcloud.com"
+default_path="/backup"
+[[servers]]
+type = "SSH"
+name = "ssh-server"
+username = "root"
+password = "123456"
+server = "192.168.0.1"
+port = 22
+default_path = "/tmp/backup"
