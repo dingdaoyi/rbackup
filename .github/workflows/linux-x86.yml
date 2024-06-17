@@ -24,12 +24,20 @@ jobs:
           sudo apt update
           sudo apt install -y musl-tools musl-dev pkg-config libssl-dev
 
+      - name: Configure pkg-config for musl
+        run: |
+          sudo mkdir -p /usr/local/musl/include/openssl
+          sudo cp -r /usr/include/openssl /usr/local/musl/include/
+          sudo mkdir -p /usr/local/musl/lib/pkgconfig
+          sudo cp /usr/lib/x86_64-linux-gnu/pkgconfig/openssl.pc /usr/local/musl/lib/pkgconfig/
+          sudo sed -i 's|prefix=/usr|prefix=/usr/local/musl|g' /usr/local/musl/lib/pkgconfig/openssl.pc
+
       - name: Build
         env:
           OPENSSL_STATIC: 1
-          OPENSSL_DIR: /usr
-          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
-          OPENSSL_INCLUDE_DIR: /usr/include
+          OPENSSL_DIR: /usr/local/musl
+          OPENSSL_LIB_DIR: /usr/local/musl/lib
+          OPENSSL_INCLUDE_DIR: /usr/local/musl/include
         run: cargo build --release --target x86_64-unknown-linux-musl
 
       - name: Archive artifacts
