@@ -22,22 +22,25 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y musl-tools musl-dev pkg-config libssl-dev
+          sudo apt install -y musl-tools musl-dev pkg-config
 
-      - name: Configure OpenSSL for musl
+      - name: Download and install OpenSSL
         run: |
-          sudo mkdir -p /usr/local/musl/include/openssl
-          sudo cp -r /usr/include/openssl/* /usr/local/musl/include/openssl/
-          sudo mkdir -p /usr/local/musl/lib
-          sudo cp /usr/lib/x86_64-linux-gnu/libssl.a /usr/local/musl/lib/
-          sudo cp /usr/lib/x86_64-linux-gnu/libcrypto.a /usr/local/musl/lib/
+          curl -O https://www.openssl.org/source/openssl-1.1.1u.tar.gz
+          tar -xzf openssl-1.1.1u.tar.gz
+          cd openssl-1.1.1u
+          ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-shared
+          make
+          sudo make install
+        env:
+          OPENSSL_VERSION: 1.1.1u
 
       - name: Build
         env:
           OPENSSL_STATIC: 1
-          OPENSSL_DIR: /usr/local/musl
-          OPENSSL_LIB_DIR: /usr/local/musl/lib
-          OPENSSL_INCLUDE_DIR: /usr/local/musl/include
+          OPENSSL_DIR: /usr/local/openssl
+          OPENSSL_LIB_DIR: /usr/local/openssl/lib
+          OPENSSL_INCLUDE_DIR: /usr/local/openssl/include
         run: cargo build --release --target x86_64-unknown-linux-musl
 
       - name: Archive artifacts
