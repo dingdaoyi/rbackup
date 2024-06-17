@@ -1,0 +1,44 @@
+name: Build-Linux
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: x86_64-unknown-linux-musl
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y musl-tools musl-dev pkg-config libssl-dev
+
+      - name: Build
+        env:
+          OPENSSL_STATIC: 1
+          OPENSSL_DIR: /usr
+          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu
+          OPENSSL_INCLUDE_DIR: /usr/include
+        run: cargo build --release --target x86_64-unknown-linux-musl
+
+      - name: Archive artifacts
+        run: |
+          cp target/x86_64-unknown-linux-musl/release/rbackup* ./
+          tar -czvf rbackup.tar.gz ./rbackup* config.toml.template
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest-package
+          path: rbackup.tar.gz
