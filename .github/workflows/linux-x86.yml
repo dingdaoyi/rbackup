@@ -29,7 +29,7 @@ jobs:
           curl -O https://www.openssl.org/source/openssl-1.1.1u.tar.gz
           tar -xzf openssl-1.1.1u.tar.gz
           cd openssl-1.1.1u
-          ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-shared
+          env CC=musl-gcc ./config --prefix=/usr/local/musl/openssl --openssldir=/usr/local/musl/openssl no-shared no-asm
           make
           sudo make install
         env:
@@ -38,10 +38,11 @@ jobs:
       - name: Build
         env:
           OPENSSL_STATIC: 1
-          OPENSSL_DIR: /usr/local/openssl
-          OPENSSL_LIB_DIR: /usr/local/openssl/lib
-          OPENSSL_INCLUDE_DIR: /usr/local/openssl/include
-        run: cargo build --release --target x86_64-unknown-linux-musl
+          OPENSSL_DIR: /usr/local/musl/openssl
+          OPENSSL_LIB_DIR: /usr/local/musl/openssl/lib
+          OPENSSL_INCLUDE_DIR: /usr/local/musl/openssl/include
+        run: |
+          cargo build --release --target x86_64-unknown-linux-musl
 
       - name: Archive artifacts
         run: |
