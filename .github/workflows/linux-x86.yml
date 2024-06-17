@@ -26,11 +26,11 @@ jobs:
 
       - name: Configure OpenSSL for musl
         run: |
-          mkdir -p /usr/local/musl/include/openssl
-          cp -r /usr/include/openssl/* /usr/local/musl/include/openssl/
-          mkdir -p /usr/local/musl/lib
-          cp -r /usr/lib/x86_64-linux-gnu/libssl.a /usr/local/musl/lib/
-          cp -r /usr/lib/x86_64-linux-gnu/libcrypto.a /usr/local/musl/lib/
+          sudo mkdir -p /usr/local/musl/include/openssl
+          sudo cp -r /usr/include/openssl/* /usr/local/musl/include/openssl/
+          sudo mkdir -p /usr/local/musl/lib
+          sudo cp /usr/lib/x86_64-linux-gnu/libssl.a /usr/local/musl/lib/
+          sudo cp /usr/lib/x86_64-linux-gnu/libcrypto.a /usr/local/musl/lib/
 
       - name: Build
         env:
